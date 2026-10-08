@@ -1,10 +1,10 @@
 ## 01. C++ Solution || Easy Approach and Step by Step Explanation
 
-The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/longest-increasing-path-in-a-matrix/1?_gl=1*1uoii0h*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjwuJLWBhD_ARIsAIBcRUyLxe5lOYdHCihFlwCz2xIgPjVupS0aVyw6w0wu8EpUYga8N0GFOUIaAlCvEALw_wcB&gbraid=0AAAAAC9yBkC6dZ9rm1drhORG61cee2iq9)
+The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/maximum-frequency-1662528911/1?_gl=1*v10f9i*_up*MQ..*_gs*MQ..&gclid=CjwKCAjw_pzWBhAkEiwAwDCi1YgF5dIT91ehvCkL8cQ9iBdt34b_hAxh82dF5XW1pKT8FIaieumYhRoCsIkQAvD_BwE&gbraid=0AAAAAC9yBkCjJUfAX7UiE3m8TxD1DCtCh)
 
 ### Problem Description
 
-**Task:** Given a matrix with n rows and m columns, find the length of the longest path such that:The path can start and end at any cell.A cell cannot be visited more than once.The values in path are strictly increasing. From each cell, you can move left, right, up, or down. Diagonal moves and moves outside the matrix are not allowed.Examples:Input: n = 3, m = 3, matrix[][] = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+**Task:** Given an integer array arr[]. In one operation, you can choose an index and increment its value by 1.Find the maximum possible frequency of any element after performing at most k operations.Examples:Input: arr[] = [2, 2, 4], k = 4
 
 #### Examples
 
@@ -12,66 +12,78 @@ The problem can be found at the following link: [Question Link](https://www.geek
 
 - **Output:**
 ```text
-1
+3
 ```
-- **Explanation:** There can at most one vertex as all vertices are same.
+- **Explanation:** Apply two increment operations on index 0 and two operations on index 1 to make arr[] = [4, 4, 4]. Frequency of 4 is 3.
+
+##### Example 2
+
+- **Input:**
+```text
+arr[] = [7, 7, 7, 7], k = 5
+```
+- **Output:**
+```text
+4
+```
+- **Explanation:** The frequency of 7 is already 4, so no operations are needed.
 
 ### Time and Auxiliary Space Complexity
 
-- **Expected Time Complexity:** O(n * m)
-- **Expected Auxiliary Space Complexity:** O(n * m)
+- **Expected Time Complexity:** O(n log n)
+- **Expected Auxiliary Space Complexity:** O(1)
 
 ### Accepted Solutions (1)
 
 #### Solution 1 (C++)
 
-- **Submitted:** 2026-10-06 21:54:47
+- **Submitted:** 2026-10-08 22:58:20
 - **Status:** Correct
-- **Marks:** 8
+- **Marks:** 4
 
 ```cpp
 class Solution {
-public:
-    vector<vector<bool>> vis;
-    vector<vector<int>> dist;
-    int n, m;
+  public:
+    int maxFrequency(vector<int>& arr, int k) {
+        // code here
+        int n=arr.size();
+        sort(arr.begin(),arr.end());
+        vector<long long >prefix(n);
+        prefix[0]=arr[0];
+        for(int i=1;i<n;i++){
+            prefix[i]=arr[i]+prefix[i-1];
 
-    bool bounds(int i, int j) { return !(i < 0 || j < 0 || i >= n || j >= m); }
 
-    int solve(vector<vector<int>>& matrix, int i, int j) {
+        }
+        int maxi=0;
+        for(int i=0;i<n;i++){
+            if(i-1>=0 && arr[i]==arr[i-1]){
+                continue;
 
-        if (vis[i][j])
-            return dist[i][j];
+            }
+            int index=lower_bound(arr.begin(),arr.end(),arr[i]+1)-arr.begin();
+            int l=0;
+            int r=index-1;
+            while(l<=r){
+                int mid=l+(r-l)/2;
+                int sum=prefix[index-1]-((mid-1)>=0?prefix[mid-1]:0);
+                int size=(index-mid)*arr[i];
+                int total=size-sum;
+                if(total<=k){
+                    maxi=max(maxi,index-mid);
+                    r=mid-1;
+                }
+                else{
+                    l=mid+1;
+                }
 
-        int res = 0;
+            }
 
-        vector<vector<int>> mv = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-        for (auto it : mv)
-            if (bounds(i + it[0], j + it[1]) && matrix[i + it[0]][j + it[1]] > matrix[i][j])
-                res = max(res, solve(matrix, i + it[0], j + it[1]));
-
-        vis[i][j] = true;
-        return dist[i][j] += res;
+        }
+        return maxi;
     }
-
-    int longIncPath(vector<vector<int>>& matrix, int n, int m) {
-
-        this->n = n;
-        this->m = m;
-
-        vis = vector<vector<bool>>(n, vector<bool>(m, false));
-        dist = vector<vector<int>>(n, vector<int>(m, 1));
-
-        int res = 0;
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < m; j++)
-                if (!vis[i][j])
-                    res = max(res, solve(matrix, i, j));
-
-        return res;
-    }
-};
+}; // simple binary search and prefix sum
 ```
 
-*Generated on: 10/6/2026, 9:55:15 PM*
+*Generated on: 10/8/2026, 10:59:11 PM*
