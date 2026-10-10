@@ -1,10 +1,10 @@
 ## 01. C++ Solution || Easy Approach and Step by Step Explanation
 
-The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/maximum-frequency-1662528911/1?_gl=1*v10f9i*_up*MQ..*_gs*MQ..&gclid=CjwKCAjw_pzWBhAkEiwAwDCi1YgF5dIT91ehvCkL8cQ9iBdt34b_hAxh82dF5XW1pKT8FIaieumYhRoCsIkQAvD_BwE&gbraid=0AAAAAC9yBkCjJUfAX7UiE3m8TxD1DCtCh)
+The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/balancing-pan5038/1?_gl=1*my09dt*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjwxKfWBhDkARIsAMKwkNZER9U2zfan8ygelDoUsd8z1NOl3GSXZ2yCofEsmHoG1d1xuzJ-xU0aAhHxEALw_wcB&gbraid=0AAAAAC9yBkC-7ZaRaHS0jNo2lLG5kmZ2E)
 
 ### Problem Description
 
-**Task:** Given an integer array arr[]. In one operation, you can choose an index and increment its value by 1.Find the maximum possible frequency of any element after performing at most k operations.Examples:Input: arr[] = [2, 2, 4], k = 4
+**Task:** Given a simple weighing scale with two pans, a target weight b, and a set of weights where each weight is a distinct power of a, find if the scale can be balanced such that: b + (some powers of a) = (some other powers of a)Note: Exactly one weight is available for each power of a, so each power can be used at most once.Examples:Input: a = 4, b = 11
 
 #### Examples
 
@@ -12,78 +12,41 @@ The problem can be found at the following link: [Question Link](https://www.geek
 
 - **Output:**
 ```text
-3
+true
 ```
-- **Explanation:** Apply two increment operations on index 0 and two operations on index 1 to make arr[] = [4, 4, 4]. Frequency of 4 is 3.
-
-##### Example 2
-
-- **Input:**
-```text
-arr[] = [7, 7, 7, 7], k = 5
-```
-- **Output:**
-```text
-4
-```
-- **Explanation:** The frequency of 7 is already 4, so no operations are needed.
+- **Explanation:** 5 + 3 + 1 = 9. So, target = 5 can be balanced using powers of 3.
 
 ### Time and Auxiliary Space Complexity
 
-- **Expected Time Complexity:** O(n log n)
+- **Expected Time Complexity:** O(log b)
 - **Expected Auxiliary Space Complexity:** O(1)
 
 ### Accepted Solutions (1)
 
 #### Solution 1 (C++)
 
-- **Submitted:** 2026-10-08 22:58:20
+- **Submitted:** 2026-10-10 21:57:52
 - **Status:** Correct
-- **Marks:** 4
+- **Marks:** 2
 
 ```cpp
 class Solution {
-  public:
-    int maxFrequency(vector<int>& arr, int k) {
-        // code here
-        int n=arr.size();
-        sort(arr.begin(),arr.end());
-        vector<long long >prefix(n);
-        prefix[0]=arr[0];
-        for(int i=1;i<n;i++){
-            prefix[i]=arr[i]+prefix[i-1];
+public:
+    bool balancePan(int a, int b) {
+        if (a <= 0 or b < 0) return 0;
+        if (a == 1) return 1;
 
-
+        while (b) {
+            int r = b % a;
+            if (r == 0) b /= a;
+            else if (r == 1) b = (b - 1) / a;
+            else if (r == a - 1) b = (b + 1) / a;
+            else return 0;
         }
-        int maxi=0;
-        for(int i=0;i<n;i++){
-            if(i-1>=0 && arr[i]==arr[i-1]){
-                continue;
 
-            }
-            int index=lower_bound(arr.begin(),arr.end(),arr[i]+1)-arr.begin();
-            int l=0;
-            int r=index-1;
-            while(l<=r){
-                int mid=l+(r-l)/2;
-                int sum=prefix[index-1]-((mid-1)>=0?prefix[mid-1]:0);
-                int size=(index-mid)*arr[i];
-                int total=size-sum;
-                if(total<=k){
-                    maxi=max(maxi,index-mid);
-                    r=mid-1;
-                }
-                else{
-                    l=mid+1;
-                }
-
-            }
-
-
-        }
-        return maxi;
+        return 1;
     }
-}; // simple binary search and prefix sum
+};
 ```
 
-*Generated on: 10/8/2026, 10:59:11 PM*
+*Generated on: 10/10/2026, 9:58:13 PM*
