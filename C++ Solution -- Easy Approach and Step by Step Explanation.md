@@ -1,10 +1,10 @@
 ## 01. C++ Solution || Easy Approach and Step by Step Explanation
 
-The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/balancing-pan5038/1?_gl=1*my09dt*_up*MQ..*_gs*MQ..&gclid=Cj0KCQjwxKfWBhDkARIsAMKwkNZER9U2zfan8ygelDoUsd8z1NOl3GSXZ2yCofEsmHoG1d1xuzJ-xU0aAhHxEALw_wcB&gbraid=0AAAAAC9yBkC-7ZaRaHS0jNo2lLG5kmZ2E)
+The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/check-if-it-is-possible-to-convert-one-string-into-another-with-given-constraints4116/1)
 
 ### Problem Description
 
-**Task:** Given a simple weighing scale with two pans, a target weight b, and a set of weights where each weight is a distinct power of a, find if the scale can be balanced such that: b + (some powers of a) = (some other powers of a)Note: Exactly one weight is available for each power of a, so each power can be used at most once.Examples:Input: a = 4, b = 11
+**Task:** Given two strings s1 and s2, consisting only of the characters 'A', 'B', and '#'. Determine whether s1 can be transformed into s2 by performing the following operations on s1:'A' can move only towards the left. 'B' can move only towards the right.Neither 'A' nor 'B' can cross each other.'#' represents an empty position through which 'A' and 'B' can move.Moving the character at index i one step to the left means swapping it with the character at index i - 1, provided i - 1 >= 0. Similarly, moving it one step to the right means swapping it with the character at index i + 1, provided i + 1 < s1.length().Return true if s1 can be transformed into s2; otherwise, return false.Examples:Input: s1 = #A#B#B#, s2 = A###B#B
 
 #### Examples
 
@@ -12,41 +12,60 @@ The problem can be found at the following link: [Question Link](https://www.geek
 
 - **Output:**
 ```text
-true
+false
 ```
-- **Explanation:** 5 + 3 + 1 = 9. So, target = 5 can be balanced using powers of 3.
+- **Explanation:** The character 'A' in s1 is at index 1, whereas the corresponding 'A' in s2 is at index 3. Since 'A' can move only towards the left, it cannot reach a position to the right of its current position. Therefore, s1 cannot be transformed into s2, and hence, the answer is false.
 
 ### Time and Auxiliary Space Complexity
 
-- **Expected Time Complexity:** O(log b)
+- **Expected Time Complexity:** O(n + m)
 - **Expected Auxiliary Space Complexity:** O(1)
 
 ### Accepted Solutions (1)
 
 #### Solution 1 (C++)
 
-- **Submitted:** 2026-10-10 21:57:52
+- **Submitted:** 2026-10-17 22:14:14
 - **Status:** Correct
 - **Marks:** 2
 
 ```cpp
 class Solution {
-public:
-    bool balancePan(int a, int b) {
-        if (a <= 0 or b < 0) return 0;
-        if (a == 1) return 1;
+  public:
+    bool isItPossible(string &s1, string &s2) {
+        int n = s1.size();
 
-        while (b) {
-            int r = b % a;
-            if (r == 0) b /= a;
-            else if (r == 1) b = (b - 1) / a;
-            else if (r == a - 1) b = (b + 1) / a;
-            else return 0;
+        if (s2.size() != n)
+            return false;
+
+        int i = 0, j = 0;
+
+        while (i < n && j < n) {
+            while (i < n && s1[i] == '#')
+                i++;
+
+            while (j < n && s2[j] == '#')
+                j++;
+
+            if (i == n || j == n)
+                return i == n && j == n;
+
+            if (s1[i] != s2[j])
+                return false;
+
+            if (s1[i] == 'A' && i < j)
+                return false;
+
+            if (s1[i] == 'B' && i > j)
+                return false;
+
+            i++;
+            j++;
         }
 
-        return 1;
+        return true;
     }
 };
 ```
 
-*Generated on: 10/10/2026, 9:58:13 PM*
+*Generated on: 10/17/2026, 10:14:34 PM*
