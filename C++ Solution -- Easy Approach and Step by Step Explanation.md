@@ -1,71 +1,150 @@
 ## 01. C++ Solution || Easy Approach and Step by Step Explanation
 
-The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/check-if-it-is-possible-to-convert-one-string-into-another-with-given-constraints4116/1)
+The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/pairs-violating-bst-property--212515/1)
 
 ### Problem Description
 
-**Task:** Given two strings s1 and s2, consisting only of the characters 'A', 'B', and '#'. Determine whether s1 can be transformed into s2 by performing the following operations on s1:'A' can move only towards the left. 'B' can move only towards the right.Neither 'A' nor 'B' can cross each other.'#' represents an empty position through which 'A' and 'B' can move.Moving the character at index i one step to the left means swapping it with the character at index i - 1, provided i - 1 >= 0. Similarly, moving it one step to the right means swapping it with the character at index i + 1, provided i + 1 < s1.length().Return true if s1 can be transformed into s2; otherwise, return false.Examples:Input: s1 = #A#B#B#, s2 = A###B#B
+**Task:** Given root of a binary tree in which all node values are distinct, count pairs of nodes that violate any of the following Binary Search Tree (BST) properties. All values in the left subtree are strictly smaller.All values in the right subtree are strictly greater.Examples:Input: root[] = [10, 50, 40, N, N, 20, 30]Output: 5
 
 #### Examples
 
 ##### Example 1
 
-- **Output:**
-```text
-false
-```
-- **Explanation:** The character 'A' in s1 is at index 1, whereas the corresponding 'A' in s2 is at index 3. Since 'A' can move only towards the left, it cannot reach a position to the right of its current position. Therefore, s1 cannot be transformed into s2, and hence, the answer is false.
+- **Explanation:** There are total 10 pairs (80, 30), (80, 60), (80, 50), (30, 60), (40, 70), (40, 30), (40, 50), (70, 30), (70, 60), (70, 50) which violate the BST properties.
 
 ### Time and Auxiliary Space Complexity
 
-- **Expected Time Complexity:** O(n + m)
-- **Expected Auxiliary Space Complexity:** O(1)
+- **Expected Time Complexity:** O(n log n)
+- **Expected Auxiliary Space Complexity:** O(n)
 
-### Accepted Solutions (1)
+### Accepted Solutions (2)
 
 #### Solution 1 (C++)
 
-- **Submitted:** 2026-10-17 22:14:14
+- **Submitted:** 2026-10-23 22:52:36
 - **Status:** Correct
-- **Marks:** 2
+- **Marks:** 0
 
 ```cpp
 class Solution {
   public:
-    bool isItPossible(string &s1, string &s2) {
-        int n = s1.size();
 
-        if (s2.size() != n)
-            return false;
+  int ans=0;
+  vector<int>merge(vector<int>&a,vector<int>&b)
+  {
+      int n=a.size(),m=b.size();
+      a.push_back(1e9);
+      b.push_back(1e9);
+      vector<int>temp;
+      int i=0,j=0;
+      for(int k=0;k<n+m;k++)
+      {
+          if(a[i]<=b[j])
+          {
+              temp.push_back(a[i++]);
+              ans+=j;
+          }
+          else temp.push_back(b[j++]);
 
-        int i = 0, j = 0;
+      }
+      return temp;
 
-        while (i < n && j < n) {
-            while (i < n && s1[i] == '#')
-                i++;
+  }
+  vector<int>mergesort(vector<int>&v)
+  {
+      int n=v.size();
+      if(n==1) return v;
+      vector<int>left,right;
+      for(int i=0;i<n;i++)
+      {
+          if(i<(n/2)) left.push_back(v[i]);
+          else right.push_back(v[i]);
+      }
+      left=mergesort(left);
+      right=mergesort(right);
+      return merge(left,right);
+  }
+  void help(Node *root,vector<int>&temp)
+  {
+      if(!root) return ;
+      help(root->left,temp);
+      temp.push_back(root->data);
+      help(root->right,temp);
 
-            while (j < n && s2[j] == '#')
-                j++;
+  }
+    int pairsViolatingBST(Node *root) {
+        vector<int>temp;
+        help(root,temp);
+        ans=0;
+        mergesort(temp);
+        return ans;
 
-            if (i == n || j == n)
-                return i == n && j == n;
-
-            if (s1[i] != s2[j])
-                return false;
-
-            if (s1[i] == 'A' && i < j)
-                return false;
-
-            if (s1[i] == 'B' && i > j)
-                return false;
-
-            i++;
-            j++;
-        }
-
-        return true;
     }
 };
 ```
 
-*Generated on: 10/17/2026, 10:14:34 PM*
+#### Solution 2 (C++)
+
+- **Submitted:** 2026-10-23 22:52:17
+- **Status:** Correct
+- **Marks:** 4
+
+```cpp
+class Solution {
+  public:
+
+  int ans=0;
+  vector<int>merge(vector<int>&a,vector<int>&b)
+  {
+      int n=a.size(),m=b.size();
+      a.push_back(1e9);
+      b.push_back(1e9);
+      vector<int>temp;
+      int i=0,j=0;
+      for(int k=0;k<n+m;k++)
+      {
+          if(a[i]<=b[j])
+          {
+              temp.push_back(a[i++]);
+              ans+=j;
+          }
+          else temp.push_back(b[j++]);
+
+      }
+      return temp;
+
+  }
+  vector<int>mergesort(vector<int>&v)
+  {
+      int n=v.size();
+      if(n==1) return v;
+      vector<int>left,right;
+      for(int i=0;i<n;i++)
+      {
+          if(i<(n/2)) left.push_back(v[i]);
+          else right.push_back(v[i]);
+      }
+      left=mergesort(left);
+      right=mergesort(right);
+      return merge(left,right);
+  }
+  void help(Node *root,vector<int>&temp)
+  {
+      if(!root) return ;
+      help(root->left,temp);
+      temp.push_back(root->data);
+      help(root->right,temp);
+
+  }
+    int pairsViolatingBST(Node *root) {
+        vector<int>temp;
+        help(root,temp);
+        ans=0;
+        mergesort(temp);
+        return ans;
+
+    }
+};
+```
+
+*Generated on: 10/23/2026, 10:52:45 PM*
