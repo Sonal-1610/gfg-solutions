@@ -1,10 +1,10 @@
 ## 01. C++ Solution || Easy Approach and Step by Step Explanation
 
-The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/new-registration-system--150419/1?_gl=1*72nq8r*_up*MQ..*_gs*MQ..&gclid=CjwKCAiAtbvXBhB_EiwAjwv9JtEV_Jc0injVQpzfz_ayURVKqBgC8z7bm4xIKioYALMUC-M-uM_GmhoC4PoQAvD_BwE&gbraid=0AAAAAC9yBkBKFYy4ZGZFQuGsHlXZ8a_Y5)
+The problem can be found at the following link: [Question Link](https://www.geeksforgeeks.org/problems/sum-of-all-sub-sequences-of-a-number3437/1)
 
 ### Problem Description
 
-**Task:** Given an array of strings arr[]. The array represents first names of users, generate a unique username for each entry in the order it appears.Initially, consider all usernames present in the input array as reserved.If a username has not already been assigned to any previous user, keep it unchanged.Otherwise, append the smallest positive integer suffix that produces a username that has not been reserved or assigned to any previous user.Return the array of generated usernames.Examples:Input: arr[] = ["aba", "ab", "aba", "aba", "ab"]Output: ["aba", "ab", "aba1", "aba2", "ab1"]Explanation: The first occurrences of "aba" and "ab" are new, so they remain unchanged. The next "aba" is already used, so "aba1" is assigned. When "aba" appears again, "aba1" is already used, so "aba2" is assigned. Similarly, the second occurrence of "ab" becomes "ab1".Input: arr[] = ["a", "a", "a1", "a"]
+**Task:** Given a string s which consists of digits, find sum of all digits across all non-empty subsequences of s.Note: Since the answer can be very large, return it modulo 10⁹ + 7.Examples:Input: s = "123"
 
 #### Examples
 
@@ -12,95 +12,65 @@ The problem can be found at the following link: [Question Link](https://www.geek
 
 - **Output:**
 ```text
-["aba1", "aba", "aba2"]
+24
 ```
-- **Explanation:** Initially, "aba1" and "aba" are reserved. The first occurrence of each retains its original name. For the second occurrence of "aba", "aba1" is already reserved, so "aba2" is assigned.
+- **Explanation:** The non-empty subsequences are: [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]. The sum of all digits in these subsequences is: 1 + 2 + 3 + (1 + 2) + (1 + 3) + (2 + 3) + (1 + 2 + 3) = 24.
+
+##### Example 2
+
+- **Input:**
+```text
+s = "405"
+```
+- **Output:**
+```text
+36
+```
+- **Explanation:** The non-empty subsequences are: [4], [0], [5], [4, 0], [4, 5], [0, 5], [4, 0, 5]. The sum of all digits in these subsequences is 36.
 
 ### Time and Auxiliary Space Complexity
 
-- **Expected Time Complexity:** O(n * m)
-- **Expected Auxiliary Space Complexity:** O(n * m)
+- **Expected Time Complexity:** O(|s|)
+- **Expected Auxiliary Space Complexity:** O(1)
 
-### Accepted Solutions (2)
+### Accepted Solutions (1)
 
 #### Solution 1 (C++)
 
-- **Submitted:** 2026-11-07 22:53:35
-- **Status:** Correct
-- **Marks:** 0
-
-```cpp
-class Solution {
-  public:
-    vector<string> generateUsernames(vector<string> arr) {
-        // code here
-        unordered_map<string,int>m;
-        int n = arr.size();
-        vector<string>ans;
-        for(int i=0;i<n;i++) m[arr[i]]=0;
-
-        for(int i=0;i<n;i++){
-
-            string s = arr[i];
-
-            if(m[s]==0){
-                ans.push_back(s);
-                m[s]++;
-            }
-            else{
-
-                while(m.count(s+to_string(m[s])))m[s]++;
-                ans.push_back(s+to_string(m[s]));
-                m[s]++;
-
-            }
-
-        }
-
-        return ans;
-
-    }
-};
-```
-
-#### Solution 2 (C++)
-
-- **Submitted:** 2026-11-07 22:53:22
+- **Submitted:** 2026-11-15 21:32:39
 - **Status:** Correct
 - **Marks:** 2
 
 ```cpp
 class Solution {
-  public:
-    vector<string> generateUsernames(vector<string> arr) {
-        // code here
-        unordered_map<string,int>m;
-        int n = arr.size();
-        vector<string>ans;
-        for(int i=0;i<n;i++) m[arr[i]]=0;
+public:
+    int subsequenceSum(string &s) {
+        const long long MOD = 1e9 + 7;
 
-        for(int i=0;i<n;i++){
+        int n = s.size();
+        long long power = 1;
+        long long ans = 0;
 
-            string s = arr[i];
+        // Calculate 2^(n-1) % MOD
+        long long base = 2;
+        int exp = n - 1;
 
-            if(m[s]==0){
-                ans.push_back(s);
-                m[s]++;
-            }
-            else{
+        while (exp > 0) {
+            if (exp & 1)
+                power = (power * base) % MOD;
 
-                while(m.count(s+to_string(m[s])))m[s]++;
-                ans.push_back(s+to_string(m[s]));
-                m[s]++;
-
-            }
-
+            base = (base * base) % MOD;
+            exp >>= 1;
         }
 
-        return ans;
+        for (char ch : s) {
+            int digit = ch - '0';
+            ans = (ans + digit * power) % MOD;
+        }
 
+        return (int)ans;
     }
 };
 ```
 
-*Generated on: 11/7/2026, 10:53:56 PM*
+*Generated on: 11/15/2026, 9:33:01 PM*
